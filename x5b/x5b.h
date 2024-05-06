@@ -76,3 +76,4 @@
 #define increase_AttSW
 #define increase_NO3loss
 #define bury
+#define debug_Salish

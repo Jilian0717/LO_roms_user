@@ -501,17 +501,17 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
       real(r8), dimension(IminS:ImaxS,N(ng)) :: bR
       real(r8), dimension(IminS:ImaxS,N(ng)) :: qc
 
-! JX
+!jx 
 #ifdef increase_AttSW
-    real(r8), dimension(LBi:UBi,LBj:UBj) :: AttSW_region
+      real(r8), dimension(LBi:UBi,LBj:UBj) :: AttSW_region
 #endif
 #ifdef increase_NO3loss
-    real(r8) :: NO3loss_region(LBi:UBi,LBj:UBj)
+      real(r8), dimension(LBi:UBi,LBj:UBj) :: NO3loss_region
 #endif
 #ifdef bury
-    real(r8), dimension(LBi:UBi,LBj:UBj) :: bury_ratio
+      real(r8), dimension(LBi:UBi,LBj:UBj) :: bury_region
 #endif
-
+!jx
 
 #include "set_bounds.h"
 #ifdef DIAGNOSTICS_BIO
@@ -595,18 +595,18 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
 #endif
 ! End PM Edit
 
-! JX Edit, add controls on Salish (AttSW, NO3loss_region, and bury_ratio in benthic flux)
-    DO j=Jstr,Jend
-      DO i=Istr,Iend
+! jx: assign values for AttSW_region, NO3loss_region, and bury_region in the Salish Sea
+    DO i=Istr,Iend
+      DO j=Jstr,Jend
         IF ((lonr(i,j).gt.-123.89_r8).and.(latr(i,j).lt.50.29_r8).and.(latr(i,j).gt.47.02_r8)) THEN
 #ifdef increase_AttSW
-            AttSW_region(i,j) = AttSW(ng)*3.0_r8    ! what is 'ng'?
+            AttSW_region(i,j) = AttSW(ng)*3.0_r8    
 #endif
 #ifdef increase_NO3loss
             NO3loss_region(i,j) = 2.4_r8
 #endif
 #ifdef bury
-            bury_ratio(i,j) = 0.5_r8
+            bury_region(i,j) = 0.5_r8
 #endif
         ELSE IF ((lonr(i,j).gt.-125.31_r8).and.(lonr(i,j).lt.-123.89_r8).and.(latr(i,j).lt.51.02_r8).and.(latr(i,j).gt.49.13_r8)) THEN
 #ifdef increase_AttSW
@@ -616,11 +616,36 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
             NO3loss_region(i,j) = 2.4_r8
 #endif
 #ifdef bury
-            bury_ratio(i,j) = 0.5_r8
+            bury_region(i,j) = 0.5_r8
+#endif
+        ELSE  !  outside the Salish Sea
+#ifdef increase_AttSW
+            AttSW_region(i,j) = AttSW(ng)
+#endif
+#ifdef increase_NO3loss
+            NO3loss_region(i,j) = 1.2_r8
+#endif
+#ifdef bury
+            bury_region(i,j) = 0.0_r8
 #endif
         END IF
+
+#ifdef debug_Salish
+        IF (i.EQ.408.0_r8) THEN
+           IF (j.EQ.1108.0_r8) THEN
+              print *, 'AttSW_region', AttSW_region(i,j)
+              print *, 'NO3loss_region', NO3loss_region(i,j)
+              print *, 'bury_region', bury_region(i,j)
+              print *, 'i, j', i, j
+              print *, 'lonr, latr', lonr(i,j), latr(i,j)
+              print *, 'indices ', Istr, Iend, Jstr, Jend, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS
+           END IF
+        END IF
+#endif
+
      END DO
     END DO
+!jx
 
 !
 !  Compute inverse thickness to avoid repeated divisions.
@@ -776,8 +801,9 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
 
 ! AL edit
 ! This version uses AttSW_region which allows the Salish Sea to have
-! a different AttSW than the coast.   !jx revise AttSW_region to AttSW_region(i,j)
+! a different AttSW than the coast.
 
+! jx
 #ifdef increase_AttSW
                 Att=(AttSW_region(i,j)+                                 &
      &               AttChl(ng)*Bio(i,k,iChlo)-                         &
@@ -789,7 +815,7 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
      &               0.0065_r8*(Bio(i,k,isalt)-32.0_r8))*               &
      &               (z_w(i,j,k)-z_w(i,j,k-1))
 #endif
-! end AL edit
+!jx
 
 ! PM Edit
 ! This version replicates the attenuation as written in Davis et al. (2014)
@@ -1630,17 +1656,19 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
      &          (ibio.eq.iSDeN).or.                                     &
      &          (ibio.eq.iLDeN)) THEN
               DO i=Istr,Iend
-#ifdef bury    !jx
-                cff1=FC(i,0)*Hz_inv(i,1)*(1-bury_ratio(i,j))
+!jx
+#ifdef bury
+                cff1=FC(i,0)*Hz_inv(i,1)*(1-bury_region(i,j))
 #else
                 cff1=FC(i,0)*Hz_inv(i,1)
 #endif
                                   
-#ifdef increase_NO3loss   !jx
+#ifdef increase_NO3loss
                 NO3loss=NO3loss_region(i,j)*dtdays*Hz_inv(i,1)
 #else
                 NO3loss=1.2_r8*dtdays*Hz_inv(i,1)
 #endif
+!jx
 
 ! >>> Start of DENITRIFICATION ifdef
 # ifdef DENITRIFICATION

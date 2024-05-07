@@ -618,7 +618,7 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
 #ifdef bury
             bury_region(i,j) = 0.5_r8
 #endif
-        ELSE  !  outside the Salish Sea
+        ELSE  !------outside the Salish Sea
 #ifdef increase_AttSW
             AttSW_region(i,j) = AttSW(ng)
 #endif
@@ -638,7 +638,7 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
               print *, 'bury_region', bury_region(i,j)
               print *, 'i, j', i, j
               print *, 'lonr, latr', lonr(i,j), latr(i,j)
-              print *, 'indices ', Istr, Iend, Jstr, Jend, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS
+           !  print *, 'indices ', Istr, Iend, Jstr, Jend, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS
            END IF
         END IF
 #endif

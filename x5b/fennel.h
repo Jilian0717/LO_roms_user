@@ -502,13 +502,13 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
       real(r8), dimension(IminS:ImaxS,N(ng)) :: qc
 
 !jx 
-#ifdef increase_AttSW
+#ifdef INCREASE_ATTSW
       real(r8), dimension(LBi:UBi,LBj:UBj) :: AttSW_region
 #endif
-#ifdef increase_NO3loss
+#ifdef INCREASE_NO3LOSS
       real(r8), dimension(LBi:UBi,LBj:UBj) :: NO3loss_region
 #endif
-#ifdef bury
+#ifdef BURY
       real(r8), dimension(LBi:UBi,LBj:UBj) :: bury_region
 #endif
 !jx
@@ -595,53 +595,54 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
 #endif
 ! End PM Edit
 
-! jx: assign values for AttSW_region, NO3loss_region, and bury_region in the Salish Sea
+! jx
+! assign values for AttSW_region, NO3loss_region, and bury_region in the Salish Sea
     DO i=Istr,Iend
       DO j=Jstr,Jend
         IF ((lonr(i,j).gt.-123.89_r8).and.(latr(i,j).lt.50.29_r8).and.(latr(i,j).gt.47.02_r8)) THEN
-#ifdef increase_AttSW
-            AttSW_region(i,j) = AttSW(ng)*3.0_r8    
+#ifdef INCREASE_ATTSW
+            AttSW_region(i,j) = AttSW(ng)*3.0_r8
 #endif
-#ifdef increase_NO3loss
+#ifdef INCREASE_NO3LOSS
             NO3loss_region(i,j) = 2.4_r8
 #endif
-#ifdef bury
+#ifdef BURY
             bury_region(i,j) = 0.5_r8
 #endif
         ELSE IF ((lonr(i,j).gt.-125.31_r8).and.(lonr(i,j).lt.-123.89_r8).and.(latr(i,j).lt.51.02_r8).and.(latr(i,j).gt.49.13_r8)) THEN
-#ifdef increase_AttSW
+#ifdef INCREASE_ATTSW
             AttSW_region(i,j) = AttSW(ng)*3.0_r8
 #endif
-#ifdef increase_NO3loss
+#ifdef INCREASE_NO3LOSS
             NO3loss_region(i,j) = 2.4_r8
 #endif
-#ifdef bury
+#ifdef BURY
             bury_region(i,j) = 0.5_r8
 #endif
         ELSE  !------outside the Salish Sea
-#ifdef increase_AttSW
+#ifdef INCREASE_ATTSW
             AttSW_region(i,j) = AttSW(ng)
 #endif
-#ifdef increase_NO3loss
+#ifdef INCREASE_NO3LOSS
             NO3loss_region(i,j) = 1.2_r8
 #endif
-#ifdef bury
+#ifdef BURY
             bury_region(i,j) = 0.0_r8
 #endif
         END IF
 
-#ifdef debug_Salish
-        IF (i.EQ.408.0_r8) THEN
-           IF (j.EQ.1108.0_r8) THEN
-              print *, 'AttSW_region', AttSW_region(i,j)
-              print *, 'NO3loss_region', NO3loss_region(i,j)
-              print *, 'bury_region', bury_region(i,j)
-              print *, 'i, j', i, j
-              print *, 'lonr, latr', lonr(i,j), latr(i,j)
-           !  print *, 'indices ', Istr, Iend, Jstr, Jend, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS
-           END IF
-        END IF
-#endif
+!#ifdef DEBUG_SALISH
+!        IF (i.EQ.408.0_r8) THEN
+!           IF (j.EQ.1108.0_r8) THEN
+!              print *, 'AttSW_region', AttSW_region(i,j)
+!              print *, 'NO3loss_region', NO3loss_region(i,j)
+!              print *, 'bury_region', bury_region(i,j)
+!              print *, 'i, j', i, j
+!              print *, 'lonr, latr', lonr(i,j), latr(i,j)
+!           !  print *, 'indices ', Istr, Iend, Jstr, Jend, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS
+!           END IF
+!        END IF
+!#endif
 
      END DO
     END DO
@@ -804,7 +805,7 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
 ! a different AttSW than the coast.
 
 ! jx
-#ifdef increase_AttSW
+#ifdef INCREASE_ATTSW
                 Att=(AttSW_region(i,j)+                                 &
      &               AttChl(ng)*Bio(i,k,iChlo)-                         &
      &               0.0065_r8*(Bio(i,k,isalt)-32.0_r8))*               &
@@ -1657,13 +1658,13 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
      &          (ibio.eq.iLDeN)) THEN
               DO i=Istr,Iend
 !jx
-#ifdef bury
+#ifdef BURY
                 cff1=FC(i,0)*Hz_inv(i,1)*(1-bury_region(i,j))
 #else
                 cff1=FC(i,0)*Hz_inv(i,1)
 #endif
                                   
-#ifdef increase_NO3loss
+#ifdef INCREASE_NO3LOSS
                 NO3loss=NO3loss_region(i,j)*dtdays*Hz_inv(i,1)
 #else
                 NO3loss=1.2_r8*dtdays*Hz_inv(i,1)

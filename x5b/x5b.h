@@ -55,6 +55,10 @@
 #  define TALK_NONCONSERV
 #  define ANA_SPFLUX
 #  define ANA_BPFLUX
+
+#  define INCREASE_ATTSW
+#  define INCREASE_NO3LOSS
+#  undef BURY
 #endif
 
 #define GLS_MIXING
@@ -72,8 +76,3 @@
 # undef  DIAGNOSTICS_UV
 # undef  OUT_DOUBLE
 #endif
-
-#define increase_AttSW
-#define increase_NO3loss
-#define bury
-#define debug_Salish

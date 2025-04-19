@@ -5,6 +5,9 @@
 - INCREASE_NO3LOSS: NO3loss increases from 1.2 to 2.4
 - BURY: bury % of sinking large and small detritus (both N and C), use bury_region to define the percentage.
 
+**2025.04.19**:
+upload the corrected version of x9b: fennel_x9b_correct.h. The bury of sinking C was overwritten in the previous version of x9b (see line 1745)
+
 **cas7_t0_x9b.pdf**: 
 - defined `INCREASE_ATTSW` and `BURY` (50%)
 - restart from cas7_t0_x4b on 2013.03.15

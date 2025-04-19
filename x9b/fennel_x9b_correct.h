@@ -1742,7 +1742,7 @@ real(r8) :: Epp, L_NH4, L_NO3, LTOT, Vp
                 cff1=FC(i,0)*Hz_inv(i,1)
 #endif                                 
               DO i=Istr,Iend
-              !  cff1=FC(i,0)*Hz_inv(i,1)
+              ! cff1=FC(i,0)*Hz_inv(i,1) !jx20250419
                 Bio(i,1,iTIC_)=Bio(i,1,iTIC_)+cff1
               END DO
             END IF
